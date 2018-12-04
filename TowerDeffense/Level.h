@@ -11,6 +11,9 @@ private:
 
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
+	
+	sf::Texture menuTexture;
+	sf::Sprite menu;
 
 	sf::Texture emptyTexture;
 	sf::Texture towerPlacementTexture;

@@ -13,4 +13,5 @@ public:
 	void Init(int x, int y, sf::Texture & texture);
 	void DrawSquare(sf::RenderWindow & window);
 	sf::Vector2i getPosition();
+	void SetColor(sf::Color color);
 };

@@ -20,3 +20,8 @@ void Square::DrawSquare(sf::RenderWindow & window) {
 sf::Vector2i Square::getPosition() {
 	return position;
 }
+
+void Square::SetColor(sf::Color color)
+{
+	sprite.setColor(color);
+}

@@ -25,16 +25,6 @@ int main() {
 	Level levels[1];
 	LevelManager::LoadLevel(levels, 0);
 
-	levels[0].DrawLevel(window);
-
-
-	sf::RectangleShape shape;
-	shape.setSize(sf::Vector2f(1200, 180));
-	shape.setFillColor(sf::Color::Yellow);
-	shape.setPosition(sf::Vector2f(0, 720));
-	window.draw(shape);
-	window.display();
-
 	while (window.isOpen()) {
 
 		sf::Event e;
@@ -50,6 +40,9 @@ int main() {
 
 		}
 
+		window.clear();
+		levels[0].DrawLevel(window);
+		window.display();
 		
 	}
 
