@@ -38,6 +38,15 @@ int main() {
 				levels[0].CheckMouseClicks(sf::Mouse::getPosition(window));
 			}
 
+			if (e.type == sf::Event::KeyPressed) {
+				if (e.key.code == sf::Keyboard::Escape) {
+					levels[0].UnselectTower();
+				}
+			}
+
+			levels[0].CheckMousePosition(sf::Mouse::getPosition(window));
+
+			
 		}
 
 		window.clear();
