@@ -16,6 +16,10 @@ public:
 		levels[level].Initialize(level);
 	}
 
+	static void LoadMenu() {
+		
+	}
+
 };
 
 
@@ -45,11 +49,11 @@ int main() {
 			}
 
 			levels[0].CheckMousePosition(sf::Mouse::getPosition(window));
-
 			
 		}
 
 		window.clear();
+		//levels[0].UpdateGame();
 		levels[0].DrawLevel(window);
 		window.display();
 		

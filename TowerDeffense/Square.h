@@ -2,11 +2,13 @@
 #include "SFML/Graphics.hpp"
 #include "Constants.h"
 
+
 class Square {
 private:
 	//Sprite uses a texture
 	sf::Sprite sprite;
 	sf::Sprite hoverSprite;
+	sf::Sprite placedTower;
 	Purpose p;
 	sf::Vector2i position;
 public:
@@ -22,4 +24,5 @@ public:
 	void setTowerTransperent(bool trans);
 	void setHoverTowerSpriteColor(sf::Color color);
 	Purpose getPurpose();
+	void LoadPlacedTowerImage(sf::Texture & texture, sf::Vector2i pos);
 };

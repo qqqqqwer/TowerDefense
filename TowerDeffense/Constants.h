@@ -10,6 +10,8 @@ enum class Purpose
 {
 	Ambient,
 	Tower,
+	BuildingPlace,
 	Path,
-	BuildingPlace
+	End,
+	Start
 };

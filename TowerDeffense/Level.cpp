@@ -1,4 +1,5 @@
 #include "Level.h"
+#include <thread>
 
 void Level::LoadMap() {
 	emptyTexture.create(SPRITE_DIMENSION, SPRITE_DIMENSION);
@@ -33,6 +34,8 @@ void Level::LoadMap() {
 
 			if (s == 2)
 				grid[x][y].Init(x, y, towerPlacementTexture, Purpose::BuildingPlace);
+			if (s == 3)
+				grid[x][y].Init(x, y, pathTexture, Purpose::End);
 
 		}
 		std::cout << "\n";
@@ -44,9 +47,13 @@ void Level::LoadMap() {
 }
 
 void Level::Initialize(int levelNumber) {
+	this->waveSize = 5;
+	this->ens = 0;
+	this->en = 0;
 	this->levelNumber = levelNumber;
 	isTowerSelected = false;
 	LoadMap();
+	SpawnNextWave(waveSize);
 }
 
 void Level::LoadResources() {
@@ -62,22 +69,29 @@ void Level::LoadResources() {
 	tower4.setTexture(tower4Texture);
 }
 
+void Level::SpawnNextWave(int number)
+{
+	for (int i = 0; i < number; i++)
+		enemies.push_back(new Enemy(rand() % 2));
+}
+
 void Level::DrawLevel(sf::RenderWindow & window) {
 
 	window.draw(background);
 	window.draw(menu);
 
-	for (int y = 0; y < 15; y++) {
-		for (int x = 0; x < 25; x++) {
+	for (int y = 0; y < 15; y++) 
+		for (int x = 0; x < 25; x++) 
 			grid[x][y].DrawSquare(window);
-			//std::cout << grid[x][y].getPosition().x << " " << grid[x][y].getPosition().y << "\n";
-		}
-	}
+
+	for (int i = 0; i < waveSize; i++)
+		window.draw(enemies[i]->getSprite());
 }
 
 void Level::CheckMouseClicks(sf::Vector2i mouse) {
 
 	//check grid clicks
+	/*
 	for (int y = 0; y < BOARD_HEIGHT; y++)
 		for (int x = 0; x < BOARD_WIDTH; x++) {
 			if (isInsideASquare(x, y, mouse.x, mouse.y)) {
@@ -87,6 +101,15 @@ void Level::CheckMouseClicks(sf::Vector2i mouse) {
 			}
 		}
 
+	*/
+
+	if (mouse.y <= 720 && mouse.y >= 0) {
+		int x = mouse.x / SPRITE_DIMENSION;
+		int y = mouse.y / SPRITE_DIMENSION;
+
+		if (isTowerSelected)
+			grid[x][y].LoadPlacedTowerImage(hoverTower, sf::Vector2i(x * SPRITE_DIMENSION, y * SPRITE_DIMENSION));
+	}
 
 	//check tower buttons
 
@@ -139,6 +162,7 @@ void Level::CheckMouseClicks(sf::Vector2i mouse) {
 	}
 }
 
+
 void Level::CheckMousePosition(sf::Vector2i mouse) {
 
 	sf::Texture empty;
@@ -168,15 +192,6 @@ void Level::CheckMousePosition(sf::Vector2i mouse) {
 	
 }
 
-void Level::AddRectangleShape(float  x, float y, float width, float height) {
-
-	sf::RectangleShape button;
-	button.setPosition(sf::Vector2f(x, y));
-	button.setSize(sf::Vector2f(width, height));
-
-
-}
-
 bool Level::isInsideASquare(int x, int y, int mx, int my) {
 	
 	if ((mx > grid[x][y].getPosition().x && mx < grid[x][y].getPosition().x + SPRITE_DIMENSION) && (my > grid[x][y].getPosition().y && my < grid[x][y].getPosition().y + SPRITE_DIMENSION))
@@ -184,6 +199,61 @@ bool Level::isInsideASquare(int x, int y, int mx, int my) {
 	else
 		return false;
 
+}
+
+void Level::UpdateGame()
+{
+
+	if (waveSize > 0) {
+
+		//Spawning
+		if (this->spawnClock.getElapsedTime().asSeconds() >= 2) {
+			ens = ens % waveSize;
+
+			//if enemy is uninitialized
+			if (!enemies[ens]->isVisible()) {
+				//initialize
+				enemies[ens]->setVisible(true);
+				enemies[ens]->setPosition(sf::Vector2i(0, 4 * 48));
+			}
+
+			enemies[ens]->Move(grid);
+
+			ens++;
+			spawnClock.restart();
+		}
+
+
+		//Update enemy position (and maybe something else)
+		if (this->enemyClock.getElapsedTime().asMilliseconds() >= 5) {
+
+			en %= waveSize;
+
+			enemies[en]->Move(grid);
+			sf::Vector2i pos = enemies[en]->getPosition();
+			pos.x = pos.x / SPRITE_DIMENSION;
+			pos.y = pos.y / SPRITE_DIMENSION;
+
+			if (grid[pos.x][pos.y].getPurpose() == Purpose::End) {
+				delete enemies[en];
+				waveSize--;
+			}
+
+			en++;
+			enemyClock.restart();
+		}
+	}
+	
+
+
+}
+
+void Level::PlaceTower(sf::Vector2i mouse)
+{
+	int x = mouse.x / SPRITE_DIMENSION;
+	int y = mouse.y / SPRITE_DIMENSION;
+
+	grid[x][y].LoadPlacedTowerImage(hoverTower, sf::Vector2i(x * SPRITE_DIMENSION, y * SPRITE_DIMENSION));
 }
 
 void Level::UnselectTower()

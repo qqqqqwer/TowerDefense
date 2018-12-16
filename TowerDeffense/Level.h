@@ -4,12 +4,21 @@
 #include <fstream>
 #include <iostream>
 #include "Constants.h"
+#include "Enemy.h"
+#include <vector>
+
 class Level {
 
 private:
 	Square grid[BOARD_WIDTH][BOARD_HEIGHT];
 	int levelNumber;
+	int waveSize;
+	int ens;
+	int en;
 	bool isTowerSelected;
+	std::vector<Enemy*> enemies;
+	sf::Clock enemyClock;
+	sf::Clock spawnClock;
 
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
@@ -36,14 +45,15 @@ private:
 
 	void LoadMap();
 	void LoadResources();
-	void SpawnNextWave();
+	void SpawnNextWave(int number);
 
 public:
 	void Initialize(int levelNumber);
 	void DrawLevel(sf::RenderWindow & window);
 	void CheckMouseClicks(sf::Vector2i mouse);
 	void CheckMousePosition(sf::Vector2i mouse);
-	void AddRectangleShape(float  x, float y, float width, float height);
 	void UnselectTower();
 	bool isInsideASquare(int x, int y, int mx, int my);
+	void UpdateGame();
+	void PlaceTower(sf::Vector2i mouse);
 };

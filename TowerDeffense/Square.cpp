@@ -22,6 +22,7 @@ void Square::Init(int x, int y, sf::Texture & texture, Purpose pur) {
 
 void Square::DrawSquare(sf::RenderWindow & window) {
 	window.draw(sprite);
+	window.draw(placedTower);
 	window.draw(hoverSprite);
 }
 
@@ -71,4 +72,10 @@ void Square::setHoverTowerSpriteColor(sf::Color color)
 Purpose Square::getPurpose()
 {
 	return p;
+}
+
+void Square::LoadPlacedTowerImage(sf::Texture & texture, sf::Vector2i pos)
+{
+	this->placedTower.setTexture(texture);
+	this->placedTower.setPosition((sf::Vector2f)pos);
 }
