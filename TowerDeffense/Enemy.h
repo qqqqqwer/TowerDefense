@@ -9,6 +9,7 @@ private:
 	sf::Texture texture; 
 	sf::Vector2i position;
 	sf::Vector2i direction;
+	bool dead;
 
 public:
 	Enemy(int r);
@@ -20,5 +21,7 @@ public:
 	void setVisible(bool invis);
 	bool isVisible();
 	void Move(Square grid[][BOARD_HEIGHT]);
+	void Die();
+	bool isDead();
 };
 

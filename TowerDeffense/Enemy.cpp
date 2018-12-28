@@ -9,6 +9,7 @@ Enemy::Enemy(int r)
 	setVisible(false);
 
 	this->direction = sf::Vector2i(0, 0);
+	this->dead = false;
 }
 
 
@@ -58,24 +59,41 @@ void Enemy::Move(Square grid[][BOARD_HEIGHT])
 	// 2. Look at nearby squares
 	// 3. Move to the nearest square that is path
 
-	int x = getPosition().x / SPRITE_DIMENSION;
-	int y = getPosition().y / SPRITE_DIMENSION;
+	if (!dead) {
+
+		int x = getPosition().x / SPRITE_DIMENSION;
+		int y = getPosition().y / SPRITE_DIMENSION;
 
 
-	if (grid[x + 1][y].getPurpose() == Purpose::Path)
-		this->direction = sf::Vector2i(1, 0);
-	if (grid[x][y + 1].getPurpose() == Purpose::Path) 
-		this->direction = sf::Vector2i(0, 1);
+		if (grid[x + 1][y].getPurpose() == Purpose::Path)
+			this->direction = sf::Vector2i(1, 0);
+		if (grid[x][y + 1].getPurpose() == Purpose::Path)
+			this->direction = sf::Vector2i(0, 1);
+
+		/*
+
+			if you'll have time another way to do the movement is to place
+			every path block into an array and have the monster follow that path
+			instead of checking for the nearest path block everytime
+
+		*/
+
+
+		this->position += this->direction;
+		this->sprite.setPosition((sf::Vector2f)position);
+	}
 	
-	/*
+}
 
-		if you'll have time another way to do the movement is to place
-		every path block into an array and have the monster follow that path
-		instead of checking for the nearest path block everytime
+void Enemy::Die()
+{
+	this->dead = true;
+	this->setPosition(sf::Vector2i(0, 0));
+	this->setVisible(false);
+	delete this;
+}
 
-	*/
-
-	
-	this->position += this->direction;
-	this->sprite.setPosition((sf::Vector2f)position);
+bool Enemy::isDead()
+{
+	return this->dead;
 }

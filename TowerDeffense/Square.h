@@ -11,6 +11,7 @@ private:
 	sf::Sprite placedTower;
 	Purpose p;
 	sf::Vector2i position;
+	bool towerIsPlaced;
 public:
 	void setHoverTower(sf::Sprite & sprite);
 	void LoadImage(sf::Texture & texture);
@@ -25,4 +26,6 @@ public:
 	void setHoverTowerSpriteColor(sf::Color color);
 	Purpose getPurpose();
 	void LoadPlacedTowerImage(sf::Texture & texture, sf::Vector2i pos);
+	void setHoverTowerVisible(bool vis);
+	bool isTowerPlaced();
 };

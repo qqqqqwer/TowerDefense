@@ -44,7 +44,7 @@ int main() {
 
 			if (e.type == sf::Event::KeyPressed) {
 				if (e.key.code == sf::Keyboard::Escape) {
-					levels[0].UnselectTower();
+					levels[0].UnselectTower(sf::Mouse::getPosition(window));
 				}
 			}
 
@@ -53,8 +53,10 @@ int main() {
 		}
 
 		window.clear();
-		//levels[0].UpdateGame();
+
+		levels[0].UpdateGame();
 		levels[0].DrawLevel(window);
+
 		window.display();
 		
 	}

@@ -16,6 +16,7 @@ private:
 	int ens;
 	int en;
 	bool isTowerSelected;
+	std::string selectedTower;
 	std::vector<Enemy*> enemies;
 	sf::Clock enemyClock;
 	sf::Clock spawnClock;
@@ -36,10 +37,6 @@ private:
 	sf::Texture enemy2Texture;
 	sf::Texture pathTexture;
 
-	sf::Sprite tower1;
-	sf::Sprite tower2;
-	sf::Sprite tower3;
-	sf::Sprite tower4;
 	sf::Texture hoverTower;
 	std::vector<sf::RectangleShape> buttons;
 
@@ -52,8 +49,7 @@ public:
 	void DrawLevel(sf::RenderWindow & window);
 	void CheckMouseClicks(sf::Vector2i mouse);
 	void CheckMousePosition(sf::Vector2i mouse);
-	void UnselectTower();
-	bool isInsideASquare(int x, int y, int mx, int my);
 	void UpdateGame();
 	void PlaceTower(sf::Vector2i mouse);
+	void UnselectTower(sf::Vector2i mouse);
 };

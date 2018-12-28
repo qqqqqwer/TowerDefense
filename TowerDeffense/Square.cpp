@@ -18,11 +18,13 @@ void Square::Init(int x, int y, sf::Texture & texture, Purpose pur) {
 	LoadImage(texture);
 	sprite.setPosition((sf::Vector2f)position);
 	p = pur;
+	this->towerIsPlaced = false;
 }
 
 void Square::DrawSquare(sf::RenderWindow & window) {
 	window.draw(sprite);
 	window.draw(placedTower);
+
 	window.draw(hoverSprite);
 }
 
@@ -61,7 +63,7 @@ void Square::setTowerTransperent(bool trans)
 	else 
 		color.a = 0;
 
-	hoverSprite.setColor(color);
+	this->hoverSprite.setColor(color);
 }
 
 void Square::setHoverTowerSpriteColor(sf::Color color)
@@ -76,6 +78,24 @@ Purpose Square::getPurpose()
 
 void Square::LoadPlacedTowerImage(sf::Texture & texture, sf::Vector2i pos)
 {
+	this->towerIsPlaced = true;
 	this->placedTower.setTexture(texture);
 	this->placedTower.setPosition((sf::Vector2f)pos);
+}
+
+void Square::setHoverTowerVisible(bool vis)
+{
+	sf::Color color = this->hoverSprite.getColor();
+
+	if (vis)
+		color.a = 255;
+	else
+		color.a = 0;
+
+	hoverSprite.setColor(color);
+}
+
+bool Square::isTowerPlaced()
+{
+	return this->towerIsPlaced;
 }
