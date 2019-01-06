@@ -6,20 +6,28 @@
 #include "Constants.h"
 #include "Enemy.h"
 #include <vector>
+#include "Timer.h"
 
 class Level {
-
 private:
 	Square grid[BOARD_WIDTH][BOARD_HEIGHT];
 	int levelNumber;
 	int waveSize;
+	int deadEnemies;
 	int ens;
 	int en;
 	bool isTowerSelected;
+	bool isWaveSpawned; 
 	std::string selectedTower;
-	std::vector<Enemy*> enemies;
+	Enemy* enemies;
 	sf::Clock enemyClock;
 	sf::Clock spawnClock;
+	sf::Clock waveClock;
+	sf::Text timerText;
+	sf::Font timerTextFont;
+	sf::Texture nextWaveButtonTexture;
+	sf::RectangleShape nextWaveButton;
+
 
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
@@ -41,6 +49,7 @@ private:
 	std::vector<sf::RectangleShape> buttons;
 
 	void LoadMap();
+	void SetUpUI();
 	void LoadResources();
 	void SpawnNextWave(int number);
 

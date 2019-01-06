@@ -1,5 +1,7 @@
 #include "Level.h"
+#include <iomanip>
 #include <thread>
+#include <math.h>
 
 void Level::LoadMap() {
 	emptyTexture.create(SPRITE_DIMENSION, SPRITE_DIMENSION);
@@ -40,19 +42,32 @@ void Level::LoadMap() {
 		std::cout << "\n";
 	}
 
-
-
 	levelFile.close();
 }
 
+void Level::SetUpUI()
+{
+	this->timerTextFont.loadFromFile("arial.ttf");
+
+	this->timerText.setFont(this->timerTextFont);
+	this->timerText.setString("10");
+	this->timerText.setCharacterSize(24);
+	this->timerText.setFillColor(sf::Color::Red);
+	this->timerText.setStyle(sf::Text::Regular);
+	//if (mouse.x >= 1002 && mouse.y >= 758 && mouse.x <= 1002 + 140 && mouse.y <= 758 + 30) {
+	this->timerText.setPosition(950, 760);
+}
+
 void Level::Initialize(int levelNumber) {
-	this->waveSize = 5;
+	this->deadEnemies = 0;
+	this->waveSize = STARTING_WAVE_SIZE;
 	this->ens = 0;
 	this->en = 0;
 	this->levelNumber = levelNumber;
-	isTowerSelected = false;
+	this->isTowerSelected = false;
+	this->isWaveSpawned = false;
+	SetUpUI();
 	LoadMap();
-	SpawnNextWave(waveSize);
 }
 
 void Level::LoadResources() {
@@ -65,8 +80,12 @@ void Level::LoadResources() {
 
 void Level::SpawnNextWave(int number)
 {
+	this->isWaveSpawned = true;
+	enemies = new Enemy[number];
+
+	srand((unsigned int)time(NULL));
 	for (int i = 0; i < number; i++)
-		enemies.push_back(new Enemy(rand() % 2));
+		enemies[i].Init(rand() % 2);
 }
 
 void Level::DrawLevel(sf::RenderWindow & window) {
@@ -74,12 +93,16 @@ void Level::DrawLevel(sf::RenderWindow & window) {
 	window.draw(background);
 	window.draw(menu);
 
+	window.draw(timerText);
+
 	for (int y = 0; y < 15; y++) 
 		for (int x = 0; x < 25; x++) 
 			grid[x][y].DrawSquare(window);
 
-	for (int i = 0; i < waveSize; i++)
-		window.draw(enemies[i]->getSprite());
+	if (this->isWaveSpawned)
+		for (int i = 0; i < waveSize; i++)
+			window.draw(enemies[i].getSprite());
+	
 }
 
 void Level::CheckMouseClicks(sf::Vector2i mouse) {
@@ -159,9 +182,13 @@ void Level::CheckMouseClicks(sf::Vector2i mouse) {
 		std::cout << "upgrade button\n";
 	}
 
-	//check menu button
+	//check next wave button
 	if (mouse.x >= 1002 && mouse.y >= 758 && mouse.x <= 1002 + 140 && mouse.y <= 758 + 30) {
-		std::cout << "menu button\n";
+
+		if (!this->isWaveSpawned) {
+			this->timerText.setString("");
+			this->SpawnNextWave(this->waveSize);
+		}
 	}
 }
 
@@ -170,67 +197,103 @@ void Level::CheckMousePosition(sf::Vector2i mouse) {
 
 	sf::Texture empty;
 	
-	int x = mouse.x / SPRITE_DIMENSION;
-	int y = mouse.y / SPRITE_DIMENSION;
+	for (int y = 0; y < BOARD_HEIGHT; y++) {
+		for (int x = 0; x < BOARD_WIDTH; x++) {
+			if (isTowerSelected) {
+				grid[x][y].LoadHoverTowerImage(hoverTower);
 
-	if (isTowerSelected) {
-		grid[x][y].LoadHoverTowerImage(hoverTower);
+				if ((mouse.x > grid[x][y].getPosition().x && mouse.x < grid[x][y].getPosition().x + SPRITE_DIMENSION) && (mouse.y > grid[x][y].getPosition().y && mouse.y < grid[x][y].getPosition().y + SPRITE_DIMENSION)) {
+					grid[x][y].setTowerTransperent(true);
 
-		if ((mouse.x > grid[x][y].getPosition().x && mouse.x < grid[x][y].getPosition().x + SPRITE_DIMENSION) && (mouse.y > grid[x][y].getPosition().y && mouse.y < grid[x][y].getPosition().y + SPRITE_DIMENSION)) {
-			grid[x][y].setTowerTransperent(true);
+					if (grid[x][y].getPurpose() == Purpose::BuildingPlace)
+						grid[x][y].setHoverTowerSpriteColor(sf::Color::Green);
+					else
+						grid[x][y].setHoverTowerSpriteColor(sf::Color::Red);
 
-			if (grid[x][y].getPurpose() == Purpose::BuildingPlace)
-				grid[x][y].setHoverTowerSpriteColor(sf::Color::Green);
-			else
-				grid[x][y].setHoverTowerSpriteColor(sf::Color::Red);
-
+				}
+				else
+					grid[x][y].setTowerTransperent(false);
+			}
 		}
-		else
-			grid[x][y].setTowerTransperent(false);
 	}
+}
+
+
+std::string TimerNumberToString(float number) {
+
+	if (number <= 0)
+		return "";
+	std::string num = std::to_string(number);
+	std::string newNum;
+	newNum += num[0];
+	newNum += num[1];
+	newNum += num[2];
+	
+	return newNum;
 }
 
 void Level::UpdateGame()
 {
 
-	if (waveSize > 0) {
 
-		//Spawning
-		if (this->spawnClock.getElapsedTime().asSeconds() >= 2) {
-			ens = ens % waveSize;
+	if (!this->isWaveSpawned) {
+		
+		float timeRemaining = sf::seconds(WAVE_TIME).asSeconds() - this->waveClock.getElapsedTime().asSeconds();
+		this->timerText.setString(TimerNumberToString(timeRemaining));
 
-			//if enemy is uninitialized
-			if (!enemies[ens]->isVisible() && !enemies[ens]->isDead()) {
-				//initialize
-				enemies[ens]->setVisible(true);
-				enemies[ens]->setPosition(sf::Vector2i(0, 4 * 48));
-			}
-
-			enemies[ens]->Move(grid);
-
-			ens++;
-			spawnClock.restart();
+		if (timeRemaining <= 0) {
+			SpawnNextWave(this->waveSize);
 		}
 
+	}
+	else {
+		if (this->waveSize != this->deadEnemies) {
 
-		//Update enemy position (and maybe something else)
-		if (this->enemyClock.getElapsedTime().asMilliseconds() >= 5) {
+			//Spawning
+			if (this->spawnClock.getElapsedTime().asSeconds() >= 2) {
+				ens = ens % waveSize;
 
-			for (int i = 0; i < this->waveSize; i++) {
-				enemies[i]->Move(grid);
-
-				int enemyX = enemies[i]->getPosition().x / SPRITE_DIMENSION;
-				int enemyY = enemies[i]->getPosition().y / SPRITE_DIMENSION;
-
-				
-
-				if (this->grid[enemyX][enemyY].getPurpose() == Purpose::End) { 
-					
-					enemies[i]->Die();
+				//if enemy is uninitialized
+				if (!enemies[ens].isVisible() && !enemies[ens].isDead()) {
+					//initialize
+					enemies[ens].setVisible(true);
+					enemies[ens].setPosition(sf::Vector2i(0, 4 * 48));
 				}
+
+				enemies[ens].Move(grid);
+
+				ens++;
+				spawnClock.restart();
 			}
 
-			this->enemyClock.restart();
+
+			//Update enemy position (and maybe something else)
+			if (this->enemyClock.getElapsedTime().asMilliseconds() >= 5) {
+
+				for (int i = 0; i < this->waveSize; i++) {
+					enemies[i].Move(grid);
+
+					int enemyX = enemies[i].getPosition().x / SPRITE_DIMENSION;
+					int enemyY = enemies[i].getPosition().y / SPRITE_DIMENSION;
+
+
+
+					if (this->grid[enemyX][enemyY].getPurpose() == Purpose::End) {
+
+						this->enemies[i].Die();
+						this->deadEnemies++;
+					}
+				}
+
+				this->enemyClock.restart();
+			}
+		}
+		//if there are no enemies
+		else {
+			this->waveClock.restart();
+			this->isWaveSpawned = false;
+			delete[] this->enemies;
+			this->deadEnemies = 0;
 		}
 	}
 

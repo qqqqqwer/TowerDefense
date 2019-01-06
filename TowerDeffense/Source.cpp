@@ -8,6 +8,7 @@
 #include "Square.h"
 #include "Tower.h"
 
+
 //Class that loads levels lol
 class LevelManager {
 
@@ -51,14 +52,12 @@ int main() {
 			levels[0].CheckMousePosition(sf::Mouse::getPosition(window));
 			
 		}
-
 		window.clear();
 
 		levels[0].UpdateGame();
 		levels[0].DrawLevel(window);
 
 		window.display();
-		
 	}
 
 	return 0;

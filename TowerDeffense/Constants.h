@@ -4,6 +4,8 @@
 #define SPRITE_DIMENSION 48
 #define PLAYFIELD_WIDTH 1200
 #define PLAYFIELD_HEIGHT 720
+#define WAVE_TIME 10
+#define STARTING_WAVE_SIZE 5
 
 
 enum class Purpose

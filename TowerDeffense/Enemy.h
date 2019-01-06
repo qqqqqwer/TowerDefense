@@ -12,7 +12,7 @@ private:
 	bool dead;
 
 public:
-	Enemy(int r);
+	void Init(int r);
 	~Enemy();
 	void LoadImage(sf::Texture & texture);
 	sf::Sprite getSprite();

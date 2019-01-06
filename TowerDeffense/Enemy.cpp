@@ -1,17 +1,14 @@
 #include "Enemy.h"
 #include <iostream>
 
-
-Enemy::Enemy(int r)
-{
-	r == 0 ? this->texture.loadFromFile("monster1.png") : this->texture.loadFromFile("monster2.png");
+void Enemy::Init(int r) {
+	r ==  0 ? this->texture.loadFromFile("monster1.png") : this->texture.loadFromFile("monster2.png");
 	this->sprite.setTexture(this->texture);
 	setVisible(false);
 
 	this->direction = sf::Vector2i(0, 0);
 	this->dead = false;
 }
-
 
 Enemy::~Enemy()
 {
@@ -88,9 +85,8 @@ void Enemy::Move(Square grid[][BOARD_HEIGHT])
 void Enemy::Die()
 {
 	this->dead = true;
-	this->setPosition(sf::Vector2i(0, 0));
+	this->setPosition(sf::Vector2i(2, 0) * SPRITE_DIMENSION);
 	this->setVisible(false);
-	delete this;
 }
 
 bool Enemy::isDead()
