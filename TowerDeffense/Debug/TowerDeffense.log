@@ -1,4 +1,1 @@
-﻿  Square.cpp
-d:\projects\c++\towerdeffense\towerdeffense\square.cpp(134): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-d:\projects\c++\towerdeffense\towerdeffense\square.cpp(135): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-  TowerDeffense.vcxproj -> D:\Projects\c++\TowerDeffense\Debug\TowerDeffense.exe
+﻿  TowerDeffense.vcxproj -> D:\Projects\c++\TowerDeffense\Debug\TowerDeffense.exe
