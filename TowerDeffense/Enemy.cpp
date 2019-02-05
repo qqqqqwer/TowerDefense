@@ -1,23 +1,30 @@
 #include "Enemy.h"
 #include <iostream>
 
-void Enemy::Init(int r) {
+void Enemy::AdjustHPBar()
+{
+	hpBar.setSize(sf::Vector2f((float)hp / fullHP * 100 * 0.5f, (float)5));
+}
+
+void Enemy::Init(int r, int hp, int speed) {
 	r ==  0 ? this->texture.loadFromFile("monster1.png") : this->texture.loadFromFile("monster2.png");
 	this->sprite.setTexture(this->texture);
 	setVisible(false);
 
+	this->hp = hp;
+	this->fullHP = hp;
+	this->speed = speed;
+
 	this->direction = sf::Vector2i(0, 0);
 	this->dead = false;
+
+	hpBar.setFillColor(sf::Color::Red);
+	hpBar.setSize(sf::Vector2f(50, 5));
 }
 
 Enemy::~Enemy()
 {
 
-}
-
-void Enemy::LoadImage(sf::Texture & texture)
-{
-	
 }
 
 sf::Sprite Enemy::getSprite()
@@ -34,6 +41,7 @@ void Enemy::setPosition(sf::Vector2i position)
 {
 	this->position = position;
 	this->sprite.setPosition((sf::Vector2f)position);
+	this->hpBar.setPosition((float)position.x, (float)position.y + 50);
 }
 
 void Enemy::setVisible(bool invis)
@@ -62,22 +70,16 @@ void Enemy::Move(Square grid[][BOARD_HEIGHT])
 		int y = getPosition().y / SPRITE_DIMENSION;
 
 
-		if (grid[x + 1][y].getPurpose() == Purpose::Path)
-			this->direction = sf::Vector2i(1, 0);
-		if (grid[x][y + 1].getPurpose() == Purpose::Path)
-			this->direction = sf::Vector2i(0, 1);
-
-		/*
-
-			if you'll have time another way to do the movement is to place
-			every path block into an array and have the monster follow that path
-			instead of checking for the nearest path block everytime
-
-		*/
-
+		if (grid[x + 1][y].getPurpose() == constants::Purpose::Path)
+			this->direction = sf::Vector2i(speed, 0);
+		if (grid[x][y + 1].getPurpose() == constants::Purpose::Path)
+			this->direction = sf::Vector2i(0, speed);
 
 		this->position += this->direction;
-		this->sprite.setPosition((sf::Vector2f)position);
+		this->setPosition(position);
+	}
+	else {
+		hpBar.setFillColor(sf::Color::Transparent);
 	}
 	
 }
@@ -92,4 +94,20 @@ void Enemy::Die()
 bool Enemy::isDead()
 {
 	return this->dead;
+}
+
+void Enemy::TakeDamage(int dmg, int & money)
+{
+	this->hp -= dmg;
+	AdjustHPBar();
+	if (hp <= 0) {
+		Die();
+	}
+}
+
+sf::RectangleShape Enemy::getHPBar() {
+	if (this->isVisible())
+		return this->hpBar;
+	else
+		return sf::RectangleShape();
 }

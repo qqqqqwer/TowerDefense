@@ -4,31 +4,16 @@
 #include <fstream>
 #include <string>
 #include "Constants.h"
-#include "Level.h"
+#include "Game.h"
 #include "Square.h"
-#include "Tower.h"
-
-
-//Class that loads levels lol
-class LevelManager {
-
-public: 
-	static void LoadLevel(Level (& levels)[1], int level) {
-		levels[level].Initialize(level);
-	}
-
-	static void LoadMenu() {
-		
-	}
-
-};
-
+#include "Menu.h"
 
 int main() {
 	sf::RenderWindow window(sf::VideoMode(1200, 900), "Window", sf::Style::Titlebar | sf::Style::Close);
 
-	Level levels[1];
-	LevelManager::LoadLevel(levels, 0);
+	Game game;
+	Menu menu;
+	constants::GameState state = constants::GameState::Menu;
 
 	while (window.isOpen()) {
 
@@ -39,23 +24,39 @@ int main() {
 				window.close();
 			}
 
-			if (e.type == sf::Event::MouseButtonPressed) {
-				levels[0].CheckMouseClicks(sf::Mouse::getPosition(window));
-			}
 
-			if (e.type == sf::Event::KeyPressed) {
-				if (e.key.code == sf::Keyboard::Escape) {
-					levels[0].UnselectTower(sf::Mouse::getPosition(window));
+			if (state == constants::GameState::InGame) {
+				if (e.type == sf::Event::MouseButtonPressed) {
+					game.CheckMouseClicks(sf::Mouse::getPosition(window));
+				}
+
+				if (e.type == sf::Event::KeyPressed) {
+
+					if (e.key.code == sf::Keyboard::Escape) {
+						game.isGamePaused() ? game.ResumeGame() : game.UnselectTower(sf::Mouse::getPosition(window));
+					}	
 				}
 			}
-
-			levels[0].CheckMousePosition(sf::Mouse::getPosition(window));
+			else {
+				if (e.type == sf::Event::MouseButtonPressed) {
+					menu.CheckMouseClicks(sf::Mouse::getPosition(window), state, game, window);
+				}
+			}
 			
+			if (state == constants::GameState::InGame) {
+				game.CheckMousePosition(sf::Mouse::getPosition(window));
+			}
+
 		}
 		window.clear();
 
-		levels[0].UpdateGame();
-		levels[0].DrawLevel(window);
+		if (state == constants::GameState::InGame) {
+			game.UpdateGame();
+			game.DrawLevel(window);
+		}
+		else {
+			menu.DrawMenu(window);
+		}
 
 		window.display();
 	}

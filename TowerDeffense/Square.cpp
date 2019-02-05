@@ -13,18 +13,20 @@ void Square::LoadImage(sf::Texture & texture) {
 	sprite.setTexture(texture);
 }
 
-void Square::Init(int x, int y, sf::Texture & texture, Purpose pur) {
+void Square::Init(int x, int y, sf::Texture & texture, constants::Purpose pur) {
 	position = sf::Vector2i((int)x * SPRITE_DIMENSION, (int)y * SPRITE_DIMENSION);
 	LoadImage(texture);
 	sprite.setPosition((sf::Vector2f)position);
 	p = pur;
-	this->towerIsPlaced = false;
 }
 
 void Square::DrawSquare(sf::RenderWindow & window) {
-	window.draw(sprite);
-	window.draw(placedTower);
 
+	window.draw(sprite);
+
+	if (p == constants::Purpose::Tower)
+		window.draw(placedTower);
+	
 	window.draw(hoverSprite);
 }
 
@@ -40,12 +42,6 @@ void Square::SetColor(sf::Color color)
 sf::Sprite Square::getSprite()
 {
 	return sprite;
-}
-
-void Square::setSprite(sf::Sprite & sprt)
-{
-	this->sprite = sprt;
-	sprite.setPosition((sf::Vector2f)position);
 }
 
 void Square::LoadHoverTowerImage(sf::Texture & texture)
@@ -71,16 +67,41 @@ void Square::setHoverTowerSpriteColor(sf::Color color)
 	this->hoverSprite.setColor(color);
 }
 
-Purpose Square::getPurpose()
+constants::Purpose Square::getPurpose()
 {
 	return p;
 }
 
-void Square::LoadPlacedTowerImage(sf::Texture & texture, sf::Vector2i pos)
+void Square::PlaceTower(sf::Texture & texture, sf::Vector2i pos, int type)
 {
-	this->towerIsPlaced = true;
+	this->p = constants::Purpose::Tower;
 	this->placedTower.setTexture(texture);
 	this->placedTower.setPosition((sf::Vector2f)pos);
+
+	upgradePrice = 150;
+	sellPrice = 50;
+
+	if (type == 1) {
+		damage = 10;
+		range = 10 * RANGE_CONVERSION;
+		fireRate = 1;
+	}
+	else if (type == 2) {
+		damage = 15;
+		range = 16 * RANGE_CONVERSION;
+		fireRate = 2;
+	}
+	else if (type == 3) {
+		damage = 18;
+		range = 8 * RANGE_CONVERSION;
+		fireRate = 3;
+	}
+	else if (type == 4) {
+		damage = 13;
+		range = 20 * RANGE_CONVERSION;
+		fireRate = 2;
+	}
+
 }
 
 void Square::setHoverTowerVisible(bool vis)
@@ -95,7 +116,25 @@ void Square::setHoverTowerVisible(bool vis)
 	hoverSprite.setColor(color);
 }
 
-bool Square::isTowerPlaced()
+std::tuple<int, int, int> Square::getTowerStats() {
+	return std::make_tuple(damage, range, fireRate);
+}
+
+int Square::Sell()
 {
-	return this->towerIsPlaced;
+	this->p = constants::Purpose::BuildingPlace;
+	return sellPrice;
+}
+
+void Square::Upgrade()
+{
+	sellPrice += 50;
+	upgradePrice += 100;
+
+	damage *= 1.3;
+	range *= 1.3;
+}
+
+int Square::getUpgradePrice() {
+	return upgradePrice;
 }

@@ -1,7 +1,6 @@
 Finish tower placing:
     //make sure the towers can only be placed on the special square designed for towers AND if no other tower is placed there. Clear hovertower sprite from the last hovered square when esc is pressed
-
-
+    //make hover tower red when it's hovering over already placed tower
 
 Finish enemies' functionality:
     //make sure the program doesn't crash when enemies reach the other side 
@@ -9,27 +8,25 @@ Finish enemies' functionality:
     //when the program starts AND inbetween waves there should be some kind of timer when enemies are not going
     //make 'next wave' button functional so that the next wave comes instantly
     //display time remaining till next wave next to the button on the UI 
-    apply red filter to next wave button when it is not useable (optional)
+    //apply red filter to next wave button when it is not useable (optional)
 
 Create a menu:
-    create a menu with play and quit buttons
-    make the ingame menu button functional. It should pause the game and open a menu which lets you resume and quit to the menu
-    restructure the program so that there is no level array. Level class should be renamed to Game or something. Level will contain a number or waves
+    //create a menu with play and quit buttons
+    /make the ingame menu button functional. It should pause the game and open a menu which lets you resume and quit to the menu
+    //restructure the program so that there is no level array. Level class should be renamed to Game or something. Level will contain a number or waves
 
 Create towers' functionality and make the game playable:
-    make towers and everything clickable
-    give tower range
-    range should be displayed when towers are about to be placed and when they are selected.
-    give enemies hp. Make waves different.
-    make the towers functional so they shoot
-    give different towers different stats
-    make towers upgradable and sellable
-    add money. Money should be rewarded for killed enemies
-    towers shouldn't be placed or upgraded if player doesn't have enough money
+    //give towers stats
+    //when towers are clicked their stats and range should be displayed
+    //give enemies hp and speed. Make waves different
+    //make towers damage and kill enemies
+    //add money. Money should be rewarded for killing enemies
+    //make towers upgradable and sellable
+    //when no tower is selected make sell and buy button red
+    //towers shouldn't be placed or upgraded if player doesn't have enough money
+    Add lives. When lives run out end screen should be displayed
+    //add visible enemies HP above their heads
 
-Create UI text and add finishing touches:
-    display score, money, lives. Score tracks enemy kills (score is optional).
-    add visible enemies HP above their heads
-    display all of thisb in the UI
+Add finishing touches:
     clean up code and remove unnecessary things
-    Finish the project: add it to github and make so that anyone could download and run it, add pictures and everything in their own folders. Finish the game. 
+    Finish the project: add it to github and make so that anyone could download and run it, add pictures and everything in their own folders. Finish the game.

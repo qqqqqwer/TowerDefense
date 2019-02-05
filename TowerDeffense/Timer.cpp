@@ -1,5 +1,6 @@
 #include "Timer.h"
 
+
 Timer::Timer() {
 	bPaused = false;
 	runTime = 0;
